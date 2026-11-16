@@ -9,10 +9,11 @@ Recorded here so the environment is reproducible.
 |---|---|---|
 | REA (`rea-agents`) | 6.9.0 | `npm i -g rea-agents` (global, stable path) |
 | Ghidra | 12.2 | `brew install ghidra` → `/opt/homebrew/opt/ghidra/libexec` |
-| Temurin JDK | 21.0.13 | `brew install openjdk@21` (keg-only; no sudo) |
+| OpenJDK | 25.0.5 | pulled by the ghidra bottle → `/opt/homebrew/opt/openjdk@25` |
 
-Ghidra's own bottle also pulls `openjdk@25`; REA's provider check passes against
-12.2 (headless + native decompiler, darwin/arm64).
+**Ghidra 12.2 requires JDK 25**, not 21 — REA's provider rejects JDK 21 at run time
+even though the install-time version check is laxer. `JAVA_HOME` in the REA
+registration must point at `openjdk@25` (the ghidra bottle installs it).
 
 ## REA MCP registration (Claude Code)
 
@@ -26,7 +27,7 @@ was repointed to the stable global binary so an `npx` cache purge can't break it
   "args": ["mcp"],
   "env": {
     "GHIDRA_INSTALL_DIR": "/opt/homebrew/opt/ghidra/libexec",
-    "JAVA_HOME": "/opt/homebrew/opt/openjdk@21"
+    "JAVA_HOME": "/opt/homebrew/opt/openjdk@25"
   }
 }
 ```
