@@ -81,14 +81,39 @@ event arrives, handler 0x12451 runs `<command>` (`Got event [%s] from publisher
 [%s]` → `Handling event` / `Forwarding event`). A bare namespace subscription
 (`aceIpc_subscribeExt(ipc, "<ns>.event", …)`) catches the rest.
 
-## Security surface (noted, not yet exploited)
+## Security surface — resolved: no shell injection
 
-Every property get/set and every event handler ends in a shell execution
-(`system` / `popen` / `fork`+`execv`, all imported). The command strings come from
-the config files, which are **not** attacker-controlled over the bus — but any bus
-peer that can set a writable (`w`/`iw`) property reaches `<command> <value>` with
-`value` from the caller. Whether the value is quoted/escaped before the shell is
-the next thing to check (handlers 0x1277d / 0x12971). Compare against cgarrot's
+Earlier this was flagged as a possible command-injection sink. **Decompiling the
+executor (`FUN_00012b8c`) closes that: there is no shell.** The set handler
+(`FUN_0001277c`, string-set @0x1277d) logs a `"%s %s %s"` string for readability,
+but execution goes through `FUN_00012b8c(command, value)`, which:
+
+1. `g_strsplit_set(command, " \t", 0)` — splits the **config-file command** into argv
+   tokens,
+2. **appends the bus-supplied `value` as the final argv element**, NUL-terminated,
+3. `fork()`, redirects fds 0/1/2 to `/dev/null` (`FUN_00012cdc` = `dup2`), then
+   **`execv(argv[0], argv)`** — no `/bin/sh`, no `system`, no `popen`.
+
+So a writable (`w`/`iw`) property setter runs `command` with `value` as **one literal
+argument**. Shell metacharacters in `value` (`;`, `|`, `` ` ``, `$()`) are inert —
+the value never reaches a shell. The command itself comes from the trusted
+property-config file, not the bus. **No command injection via the bus here.**
+
+### get vs set — a deliberate asymmetry
+
+The two paths handle the shell differently, and correctly:
+
+| Path | Executor | Shell? | Untrusted input? |
+|---|---|---|---|
+| **set** (`w`/`iw`, `FUN_0001277c`→`FUN_00012b8c`) | `fork`+`execv`, value as last argv | **no** | yes (bus `value`) — but kept out of the shell |
+| **get** (`r`/`ir`, `FUN_000126a8`→`FUN_00012ac4`) | **`popen(command,"r")`** (`/bin/sh -c`) | **yes** | **no** — get takes no caller value, only the config command |
+
+So the path that takes untrusted bus input (`set`) avoids the shell entirely, and the
+path that uses the shell (`get`) is fed only the trusted config command. Shell
+metacharacters only ever matter in `command`, which an operator writes in the
+property-config file. **Net: no bus-reachable command injection in `aceipc-daemon`.**
+(A `get` command with a space is also split by the shell as normal — expected, since
+`get` runs the command verbatim.) Compare against cgarrot's
 network-surface findings before drawing conclusions.
 
 ## Imports of note
