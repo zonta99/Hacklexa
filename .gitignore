@@ -12,3 +12,6 @@ toolchain/
 *.gpr
 *.rep
 .DS_Store
+
+# Shipped firmware config — Amazon's property, not redistributed (quoted in docs instead)
+findings/build.prop
