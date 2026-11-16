@@ -48,6 +48,11 @@ and its libraries on `doebrite`, the way `kilworks` did for `biscuit`.
 4. **Extract** `/system` from the ext4 image read-only with `debugfs` — see `docs/extraction.md`.
 5. **Analyze** the Alexa binaries with REA.
 
+## Conclusions
+
+See [docs/CONCLUSIONS.md](docs/CONCLUSIONS.md) — the project's turning point: a hardened
+device with no static software foothold; the deliverable is the architecture map.
+
 ## Legal
 
 Personal security research on hardware I own. Firmware images and extracted binaries

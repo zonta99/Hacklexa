@@ -73,6 +73,18 @@ doebrite (3rd gen)  ACE IPC (aceIpc_* over libaceipc.so) → D-Bus,
 Same D-Bus substrate, a cleaner C API, and the attachment transport moved off
 shared memory and into the message itself.
 
+## Untrusted-input parsing is safe
+
+`aceIpc_getCharArrayParam` (0x16478) — the path that reads a binary blob out of an
+incoming D-Bus message — is written defensively: it checks the arg type is an array
+(`0x61`) of bytes (`0x79`), then calls `dbus_message_iter_get_fixed_array`, which
+hands the caller a **pointer + length into the message buffer**. It does **not**
+`memcpy` into a fixed buffer, so there is no overflow in libaceipc itself; the only
+stack buffer is the 56-byte `DBusMessageIter`, correctly sized. Any credential-blob
+bug would therefore live in a *consumer* that copies `(ptr,len)` into its own buffer —
+i.e. the setup/OOBE daemon that registers the WiFi properties, not this library.
+That surface is reached at runtime (cf. cgarrot's OOBE/WhisperJoin work), not here.
+
 ## Next
 
 - Decompile `aceIpc_subscribeExt` and `prvListenThread` to confirm the exact match
