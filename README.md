@@ -42,11 +42,12 @@ and its libraries on `doebrite`, the way `kilworks` did for `biscuit`.
 
 1. **Download** the OTA `.bin` from Amazon CloudFront — `scripts/download-ota.sh`
    (URL and MD5 indexed by [FTVDB](https://ftvdb.com/echo/firmware/com.amazon.doebrite.android.os/)).
-2. **Unzip** the `.bin` (it is a SignApk ZIP).
-3. **Convert** `system.new.dat` + `system.transfer.list` to a raw ext4 image with
-   `scripts/sdat2img.py` (xpirt, MIT).
-4. **Extract** `/system` from the ext4 image read-only with `debugfs` — see `docs/extraction.md`.
-5. **Analyze** the Alexa binaries with REA.
+2. **Unzip** the `.bin` (SignApk ZIP) — Fire OS 6 ships a single A/B `payload.bin`.
+3. **Dump** partitions from `payload.bin` with `payload_dumper` (yields `system.img`).
+4. **Extract** `/system` from the squashfs/zstd `system.img` with `unsquashfs` — see
+   [docs/extraction.md](docs/extraction.md).
+5. **Analyze** with REA + Ghidra — see [docs/analysis-setup.md](docs/analysis-setup.md)
+   and the subsystem docs under `docs/`.
 
 ## Conclusions
 
