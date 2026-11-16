@@ -38,6 +38,7 @@ embedded platform layer. This is a genuinely different device from what
   **Done:** `aceipc-daemon` decompiled — it is LIPC's `lipc-daemon` carried forward,
   a config-driven event/property→shell-command engine. See
   [messaging-aceipc.md](messaging-aceipc.md).
+  Transport is D-Bus; see [transport-aceipc.md](transport-aceipc.md).
 - **`ace_*` daemons** — `ace_powerd`, `ace_thermald`, `ace_sensorsd`,
   `ace_metric_daemon`, `ace_otad`, `acebuttond`, `aceinputmanager`. The HAL layer.
 - **`amzn_dha_tool` / `fireos-dha` / `libacehal_dha.so`** — device health attestation

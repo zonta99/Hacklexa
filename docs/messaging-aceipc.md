@@ -103,5 +103,7 @@ Android clang 3.8 (LLVM 3.8), gold linker.
 
 - Decompile the four property handlers (0x126a9/0x1277d/0x128bd/0x12971) and the
   event handler (0x12451) to confirm the exact shell-exec and any escaping.
-- `libaceipc.so` — the transport itself (socket vs. shared memory, wire format).
+- `libaceipc.so` — the transport itself. **Done:** it is a **D-Bus** client; events
+  are D-Bus signals, binary params ride inline as fixed byte arrays. See
+  [transport-aceipc.md](transport-aceipc.md).
 - Diff against the biscuit `liblipc` to measure what ACE changed.
