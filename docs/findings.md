@@ -32,6 +32,9 @@ embedded platform layer. This is a genuinely different device from what
 - **`libAlexa.so`, `libacsdk*` (57 libs)** — the Alexa Client SDK surface.
 - **ACE IPC** — `aceipc-daemon` and the `aceipc-*` CLIs: the on-device message bus
   (the LIPC equivalent). The transport to map first.
+  **Done:** `aceipc-daemon` decompiled — it is LIPC's `lipc-daemon` carried forward,
+  a config-driven event/property→shell-command engine. See
+  [messaging-aceipc.md](messaging-aceipc.md).
 - **`ace_*` daemons** — `ace_powerd`, `ace_thermald`, `ace_sensorsd`,
   `ace_metric_daemon`, `ace_otad`, `acebuttond`, `aceinputmanager`. The HAL layer.
 - **`amzn_dha_tool` / `fireos-dha` / `libacehal_dha.so`** — device health attestation
