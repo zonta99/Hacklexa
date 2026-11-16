@@ -77,6 +77,49 @@ seam between Amazon's shipped engine and the open SDK.
   gamma `polaron`, preprod `tetryon`, per region (NA/EU/FE/CN).
 - Local state DBs under `/data/avs/resources/` (alerts, bluetooth, settings, …).
 
+## Controller internals (static, from the 10 MB binary)
+
+Decompiled symbols in `AlexaHybridExecutionControllerLitespeed`
+(`sha256 d51dfd61…8afd`) put the network stack in
+`AlexaHybridSDK::ExecutionController::Net`:
+
+- **`Net::Server::TLSServer`** — the EC front door is a **TLS server**, not a plain
+  socket. It also runs a daily-metrics timer. So traffic to port 7802 is TLS-wrapped.
+- **`Net::BaseConnection`** — per-connection read/write/close/stop state machine,
+  driven by the SDK's `Common::Executor` (`scheduleRead`,
+  `onProtocolHandlerReadyToWrite`).
+- **`Net::Http2::AvsStreamAdapter`** — HTTP/2 adapter bridging to AVS
+  (`sendResponseAudio`), i.e. the cloud leg.
+- **`Core::CoreConnection` / `ConnectionManager` / `ExecutionControllerFacadeImpl`** —
+  message routing: `sendMessageToChannel`, `sendMessageToDownChannel`,
+  `sendMessageToChannelControllerManager`,
+  `sendMessageToDownchannelForDivergence`, plus update handlers
+  (`handleExecutionPolicyUpdated`, `handleInterfaceConfigArtifactUpdated`,
+  `handleLroReadinessUpdated`, `handleLocalEngineStateSluUpdated`,
+  `notifyLocalEngineIsReady`).
+
+### The external-listen gate (not yet resolved)
+
+The binary reads two config keys the shipped JSON does **not** set:
+
+- `AlexaHybrid.SDK.ExecutionController.ListenOnExternalEndpoint`
+- `AlexaHybrid.SDK.ExecutionController.ListenOnExternalUnsecureEndpoint`
+
+Shipped `ahe.config.json` sets only `Address=0.0.0.0`, `Port=7802`, `StartLSF=false`,
+leaving both `ListenOnExternal*` flags at their **binary defaults**. So `0.0.0.0` is
+the configured bind template, but whether the EC actually opens a non-loopback
+socket — and whether an *unsecure* (non-TLS) external endpoint is ever allowed — is
+decided by those two defaults. The key is read through a 64-byte config-key accessor
+(`FUN_0046b348` → the key string at `0x26e378`); the value is consumed deep in the
+templated config/Net setup, too many hops to pin statically here without high effort.
+
+**Honest status:** the EC is TLS-fronted and has an explicit external-listen gate,
+which is the safe design. Whether port 7802 is reachable off-device on this build is
+**not proven** from static config alone — the default of `ListenOnExternalEndpoint`
+decides it. Best answered on a live device (an `ss -ltnp` / nmap of 7802, the way
+cgarrot measured the network surface), or by tracing the config consumer in a
+follow-up session. Do not state it as exposed or as loopback-only until then.
+
 ## Open threads
 
 - `ahe.clear.policy.js` is referenced but **not shipped** in the OTA `/system/etc`
