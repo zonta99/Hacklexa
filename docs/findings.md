@@ -30,6 +30,9 @@ embedded platform layer. This is a genuinely different device from what
 - **`AlexaHybridExecutionControllerLitespeed`** — the Alexa engine, the big binary.
   "Litespeed" + "Hybrid Execution" points at on-device inference/routing.
 - **`libAlexa.so`, `libacsdk*` (57 libs)** — the Alexa Client SDK surface.
+  **Done:** AHE architecture mapped — AlexaHybridLitespeed engine, EC/LRO/CoreEngine/
+  ArtifactManager components, built-in local skills, libAlexa.so = AVS Device SDK
+  build. See [alexa-hybrid-ahe.md](alexa-hybrid-ahe.md).
 - **ACE IPC** — `aceipc-daemon` and the `aceipc-*` CLIs: the on-device message bus
   (the LIPC equivalent). The transport to map first.
   **Done:** `aceipc-daemon` decompiled — it is LIPC's `lipc-daemon` carried forward,
