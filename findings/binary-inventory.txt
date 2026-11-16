@@ -1,0 +1,9 @@
+# Binary inventory (doebrite NS6575) — key Alexa/ACE targets
+
+AlexaHybridExecutionControllerLitespeed       ELF 32-bit LSB pie executable, ARM, EABI5 version 1 (SYSV), dynamically linked, 
+aceipc-daemon                                 ELF 32-bit LSB shared object, ARM, EABI5 version 1 (SYSV), dynamically linked, i
+ace                                           ELF 32-bit LSB shared object, ARM, EABI5 version 1 (SYSV), dynamically linked, i
+amzn_dha_tool                                 ELF 32-bit LSB shared object, ARM, EABI5 version 1 (SYSV), dynamically linked, i
+mixer                                         ELF 32-bit LSB shared object, ARM, EABI5 version 1 (SYSV), dynamically linked, i
+AceCredentialManagerService                   ELF 32-bit LSB shared object, ARM, EABI5 version 1 (SYSV), dynamically linked, i
+ace_otad                                      ELF 32-bit LSB shared object, ARM, EABI5 version 1 (SYSV), dynamically linked, i

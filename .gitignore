@@ -1,0 +1,14 @@
+# Firmware images and extracted trees are Amazon's property — never commit them.
+firmware/
+extract/
+*.bin
+*.img
+*.new.dat
+*.transfer.list
+*.zip
+
+# REA / toolchain output that is large or machine-specific
+toolchain/
+*.gpr
+*.rep
+.DS_Store
