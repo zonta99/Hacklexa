@@ -42,7 +42,7 @@ embedded platform layer. This is a genuinely different device from what
 - **`ace_*` daemons** — `ace_powerd`, `ace_thermald`, `ace_sensorsd`,
   `ace_metric_daemon`, `ace_otad`, `acebuttond`, `aceinputmanager`. The HAL layer.
 - **`amzn_dha_tool` / `fireos-dha` / `libacehal_dha.so`** — device health attestation
-  (same family as `biscuit`, worth diffing).
+  (same family as `biscuit`, worth diffing). **Done:** DHAv2 vs biscuit DHAv1 — see [attestation-dha.md](attestation-dha.md).
 - **`libpryon.so` / `libPryonDetector.so` / `libpryonlite.so`** — wake-word engine.
 - **`mixer` / `libmixerAPI.so`** — audio mixer (matches `echo-dot-assist`'s notes).
 - **`AceCredentialManagerService`** — credential/identity service.
